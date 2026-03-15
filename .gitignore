@@ -1,0 +1,8 @@
+.venv/
+app_env/
+__pycache__/
+model/
+uploads/
+*.pth
+*.pt
+.DS_Store
