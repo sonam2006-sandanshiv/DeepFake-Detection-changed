@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image, ImageFilter
 from torchvision import models, transforms
 from flask import Flask, request, render_template, jsonify
+from flask_cors import CORS
 import io
 import base64
 try:
@@ -13,6 +14,7 @@ except ImportError:
     CLIPProcessor, CLIPModel = None, None
 
 app = Flask(__name__)
+CORS(app)  # Allow cross-origin from Vercel frontend
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
@@ -40,19 +42,39 @@ def get_model_architecture(name):
         raise ValueError(f"Unknown architecture {name}")
     return m
 
+def _maybe_download_model(dest_path, env_key):
+    """Download model from URL in env var if file doesn't exist."""
+    if os.path.exists(dest_path):
+        return True
+    url = os.environ.get(env_key)
+    if not url:
+        print(f"No env var {env_key} set and {dest_path} missing — skipping.")
+        return False
+    try:
+        import urllib.request
+        print(f"Downloading {dest_path} from {url}...")
+        os.makedirs(os.path.dirname(dest_path) or '.', exist_ok=True)
+        urllib.request.urlretrieve(url, dest_path)
+        print(f"Downloaded {dest_path}.")
+        return True
+    except Exception as e:
+        print(f"Download failed for {dest_path}: {e}")
+        return False
+
 def load_models():
     global models_ensemble
     base_dir = "model"
+    os.makedirs(base_dir, exist_ok=True)
     
-    # Define models to load
     model_files = {
-        'resnet50': 'resnet50_detector.pth',
-        'efficientnet': 'efficientnet_detector.pth',
-        'mobilenet': 'mobilenet_detector.pth'
+        'resnet50':     ('resnet50_detector.pth',    'HF_RESNET_MODEL'),
+        'efficientnet': ('efficientnet_detector.pth', 'HF_EFFICIENTNET_MODEL'),
+        'mobilenet':    ('mobilenet_detector.pth',   'HF_MOBILENET_MODEL'),
     }
     
-    for name, filename in model_files.items():
+    for name, (filename, env_key) in model_files.items():
         path = os.path.join(base_dir, filename)
+        _maybe_download_model(path, env_key)
         if os.path.exists(path):
             try:
                 m = get_model_architecture(name)
@@ -152,9 +174,9 @@ def predict():
         image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
         encoded_img = base64.b64encode(image_bytes).decode('utf-8')
         
-        if len(models_ensemble) != 3:
+        if len(models_ensemble) == 0:
             return jsonify({
-                'error': 'Missing one or more ensemble models. Ensure ResNet, EfficientNet, and MobileNet are trained.',
+                'error': 'No models loaded. Please configure HF_RESNET_MODEL, HF_EFFICIENTNET_MODEL, HF_MOBILENET_MODEL env vars on Render.',
                 'image': encoded_img
             })
             

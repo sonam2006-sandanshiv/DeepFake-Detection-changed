@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: deepfake-detection-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --timeout 120 --workers 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: HF_RESNET_MODEL
+        sync: false
+      - key: HF_EFFICIENTNET_MODEL
+        sync: false
+      - key: HF_MOBILENET_MODEL
+        sync: false

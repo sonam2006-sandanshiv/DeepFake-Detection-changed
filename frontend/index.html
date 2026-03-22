@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Deepfake Detector</title>
+    <meta name="description" content="Upload any photo to instantly detect if it is real or AI-generated using a multi-model ensemble and CLIP semantic analysis.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Deepfake Detector</h1>
+            <p>Upload a photo to analyze whether it is real or AI-generated.</p>
+        </header>
+
+        <div class="upload-section">
+            <div class="upload-area" id="drop-zone">
+                <input type="file" id="file-input" accept="image/*" hidden>
+                <div class="upload-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                        class="upload-icon" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p>Drag &amp; Drop your image here or <span class="browse-text">Browse</span></p>
+                    <p class="file-hint">Supports JPG, PNG, WEBP</p>
+                </div>
+            </div>
+
+            <div class="preview-area" id="preview-area" style="display: none;">
+                <img id="image-preview" src="" alt="Preview">
+                <button id="remove-btn" class="btn btn-secondary">Remove</button>
+                <button id="analyze-btn" class="btn btn-primary">Analyze Image</button>
+            </div>
+        </div>
+
+        <div class="loading-state" id="loading-state" style="display: none;">
+            <div class="spinner"></div>
+            <p>Analyzing image structure and artifacts...</p>
+        </div>
+
+        <div class="results-section" id="results-section" style="display: none;">
+            <h2>Analysis Result</h2>
+            <div class="result-card" id="result-card">
+                <div class="verdict" id="verdict">Real</div>
+                <div class="confidence" id="confidence">Confidence: 98%</div>
+
+                <div class="progress-bars">
+                    <div class="bar-group">
+                        <div class="bar-label">
+                            <span>Real</span>
+                            <span id="real-val">98%</span>
+                        </div>
+                        <div class="bar-bg">
+                            <div class="bar-fill real" id="real-bar" style="width: 98%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="bar-group">
+                        <div class="bar-label">
+                            <span>Fake</span>
+                            <span id="fake-val">2%</span>
+                        </div>
+                        <div class="bar-bg">
+                            <div class="bar-fill fake" id="fake-bar" style="width: 2%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reasoning-dropdown" id="reasoning-dropdown" style="display: none;">
+                    <button class="dropdown-toggle" id="dropdown-toggle" type="button">
+                        View Detailed Analysis ▼
+                    </button>
+                    <div class="dropdown-content" id="dropdown-content" style="display: none;">
+                        <div class="reason-item">
+                            <span class="reason-label">Facial Asymmetry</span>
+                            <div class="reason-bar-bg">
+                                <div class="reason-bar-fill" id="asymmetry-bar"></div>
+                            </div>
+                            <span class="reason-val" id="asymmetry-val">0%</span>
+                        </div>
+                        <div class="reason-item">
+                            <span class="reason-label">Colour Irregularity</span>
+                            <div class="reason-bar-bg">
+                                <div class="reason-bar-fill" id="colour-bar"></div>
+                            </div>
+                            <span class="reason-val" id="colour-val">0%</span>
+                        </div>
+                        <div class="reason-item">
+                            <span class="reason-label">Digital Artifacts</span>
+                            <div class="reason-bar-bg">
+                                <div class="reason-bar-fill" id="artifact-bar"></div>
+                            </div>
+                            <span class="reason-val" id="artifact-val">0%</span>
+                        </div>
+                        <div class="reason-item">
+                            <span class="reason-label">Blur Inconsistency</span>
+                            <div class="reason-bar-bg">
+                                <div class="reason-bar-fill" id="blur-bar"></div>
+                            </div>
+                            <span class="reason-val" id="blur-val">0%</span>
+                        </div>
+                        <div class="reason-item">
+                            <span class="reason-label">Noise Pattern</span>
+                            <div class="reason-bar-bg">
+                                <div class="reason-bar-fill" id="noise-bar"></div>
+                            </div>
+                            <span class="reason-val" id="noise-val">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div id="error-message" class="error-message"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
