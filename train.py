@@ -15,16 +15,14 @@ def get_model(model_name, device):
         model = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
         num_ftrs = model.fc.in_features
         model.fc = nn.Linear(num_ftrs, 2)
-    elif model_name == 'inception_v3':
-        model = models.inception_v3(weights=models.Inception_V3_Weights.DEFAULT, transform_input=False)
-        model.aux_logits = False
-        model.AuxLogits = None
-        num_ftrs = model.fc.in_features
-        model.fc = nn.Linear(num_ftrs, 2)
-    elif model_name == 'vit_b_16':
-        model = models.vit_b_16(weights=models.ViT_B_16_Weights.DEFAULT)
-        num_ftrs = model.heads.head.in_features
-        model.heads.head = nn.Linear(num_ftrs, 2)
+    elif model_name == 'efficientnet':
+        model = models.efficientnet_b0(weights=models.EfficientNet_B0_Weights.DEFAULT)
+        num_ftrs = model.classifier[1].in_features
+        model.classifier[1] = nn.Linear(num_ftrs, 2)
+    elif model_name == 'mobilenet':
+        model = models.mobilenet_v3_large(weights=models.MobileNet_V3_Large_Weights.DEFAULT)
+        num_ftrs = model.classifier[3].in_features
+        model.classifier[3] = nn.Linear(num_ftrs, 2)
     else:
         raise ValueError(f"Unknown model name {model_name}")
     
@@ -34,11 +32,11 @@ def set_parameter_requires_grad(model, freeze, model_name):
     if freeze:
         for param in model.parameters():
             param.requires_grad = False
-        if model_name in ['resnet50', 'inception_v3']:
+        if model_name == 'resnet50':
             for param in model.fc.parameters():
                 param.requires_grad = True
-        elif model_name == 'vit_b_16':
-            for param in model.heads.head.parameters():
+        elif model_name in ['efficientnet', 'mobilenet']:
+            for param in model.classifier.parameters():
                 param.requires_grad = True
     else:
         for param in model.parameters():
@@ -208,11 +206,17 @@ def main(args):
     out_dir = '/kaggle/working/model'
     os.makedirs(out_dir, exist_ok=True)
 
-    save_path = os.path.join(out_dir, f"{args.model}_detector.pth")
-    best_metrics = train_single_model(args.model, dataloaders, device, save_path, args.epochs, class_weights=class_weights)
-    
+    models_to_train = args.models
+    if 'all' in models_to_train:
+        models_to_train = ['resnet50', 'efficientnet', 'mobilenet']
+
     json_path = os.path.join(out_dir, "metrics.json")
-    best_overall_model = update_metrics_json(args.model, best_metrics, json_path=json_path)
+    best_overall_model = None
+
+    for model_name in set(models_to_train):
+        save_path = os.path.join(out_dir, f"{model_name}_detector.pth")
+        best_metrics = train_single_model(model_name, dataloaders, device, save_path, args.epochs, class_weights=class_weights)
+        best_overall_model = update_metrics_json(model_name, best_metrics, json_path=json_path)
     
     print(f"\nThe current historical BEST performing model in metrics.json is {best_overall_model.upper()}")
     
@@ -229,7 +233,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, required=True, choices=['resnet50', 'inception_v3', 'vit_b_16'])
+    parser.add_argument('--models', type=str, nargs='+', default=['resnet50', 'mobilenet'], choices=['resnet50', 'efficientnet', 'mobilenet', 'all'], help="Models to train")
     parser.add_argument('--data_dir', type=str, default='/kaggle/input/dataset', help='Kaggle dataset path')
     parser.add_argument('--epochs', type=int, default=15)
     parser.add_argument('--batch_size', type=int, default=16)

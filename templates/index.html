@@ -45,7 +45,7 @@
         </div>
 
         <div class="loading-state" id="loading-state" style="display: none;">
-            <div class="cat-loader">🐈</div>
+            <div class="spinner"></div>
             <p>Analyzing image structure and artifacts...</p>
         </div>
 
@@ -79,29 +79,43 @@
 
                 <div class="reasoning-dropdown" id="reasoning-dropdown" style="display: none;">
                     <button class="dropdown-toggle" id="dropdown-toggle" type="button">
-                        View Fake Reasoning Details ▼
+                        View Detailed Analysis ▼
                     </button>
                     <div class="dropdown-content" id="dropdown-content" style="display: none;">
                         <div class="reason-item">
-                            <span class="reason-label">Photoshop/Editing</span>
+                            <span class="reason-label">Facial Asymmetry</span>
                             <div class="reason-bar-bg">
-                                <div class="reason-bar-fill" id="photoshop-bar"></div>
+                                <div class="reason-bar-fill" id="asymmetry-bar"></div>
                             </div>
-                            <span class="reason-val" id="photoshop-val">0%</span>
+                            <span class="reason-val" id="asymmetry-val">0%</span>
                         </div>
                         <div class="reason-item">
-                            <span class="reason-label">Color Grading Mismatch</span>
+                            <span class="reason-label">Colour Irregularity</span>
                             <div class="reason-bar-bg">
-                                <div class="reason-bar-fill" id="color-bar"></div>
+                                <div class="reason-bar-fill" id="colour-bar"></div>
                             </div>
-                            <span class="reason-val" id="color-val">0%</span>
+                            <span class="reason-val" id="colour-val">0%</span>
                         </div>
                         <div class="reason-item">
-                            <span class="reason-label">AI Manipulation</span>
+                            <span class="reason-label">Digital Artifacts</span>
                             <div class="reason-bar-bg">
-                                <div class="reason-bar-fill" id="ai-bar"></div>
+                                <div class="reason-bar-fill" id="artifact-bar"></div>
                             </div>
-                            <span class="reason-val" id="ai-val">0%</span>
+                            <span class="reason-val" id="artifact-val">0%</span>
+                        </div>
+                        <div class="reason-item">
+                            <span class="reason-label">Blur Inconsistency</span>
+                            <div class="reason-bar-bg">
+                                <div class="reason-bar-fill" id="blur-bar"></div>
+                            </div>
+                            <span class="reason-val" id="blur-val">0%</span>
+                        </div>
+                        <div class="reason-item">
+                            <span class="reason-label">Noise Pattern</span>
+                            <div class="reason-bar-bg">
+                                <div class="reason-bar-fill" id="noise-bar"></div>
+                            </div>
+                            <span class="reason-val" id="noise-val">0%</span>
                         </div>
                     </div>
                 </div>

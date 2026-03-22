@@ -36,13 +36,13 @@ def main(data_dir='/kaggle/input/dataset'):
     
     base_dir = '/kaggle/working/model/'
     resnet = load_saved_model('resnet50', os.path.join(base_dir, 'resnet50_detector.pth'), device)
-    inception = load_saved_model('inception_v3', os.path.join(base_dir, 'inception_v3_detector.pth'), device)
-    vit = load_saved_model('vit_b_16', os.path.join(base_dir, 'vit_b_16_detector.pth'), device)
+    efficientnet = load_saved_model('efficientnet', os.path.join(base_dir, 'efficientnet_detector.pth'), device)
+    mobilenet = load_saved_model('mobilenet', os.path.join(base_dir, 'mobilenet_detector.pth'), device)
     
     active_models = {}
     if resnet: active_models['resnet50'] = resnet
-    if inception: active_models['inception_v3'] = inception
-    if vit: active_models['vit_b_16'] = vit
+    if efficientnet: active_models['efficientnet'] = efficientnet
+    if mobilenet: active_models['mobilenet'] = mobilenet
     
     if len(active_models) == 0:
         print("No models found to evaluate.")

@@ -126,7 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const confidenceEl = document.getElementById('confidence');
 
         verdictEl.textContent = data.result;
-        verdictEl.className = 'verdict ' + data.result.toLowerCase();
+        let baseClass = data.result === "Real" ? "real" : "fake";
+        verdictEl.className = 'verdict ' + baseClass;
 
         confidenceEl.textContent = `Confidence: ${data.confidence}`;
 
@@ -142,21 +143,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const dropdown = document.getElementById('reasoning-dropdown');
         const dropdownContent = document.getElementById('dropdown-content');
-        if (data.result === 'Fake') {
-            dropdown.style.display = 'block';
-            document.getElementById('photoshop-val').textContent = data.photoshop;
-            document.getElementById('color-val').textContent = data.color;
-            document.getElementById('ai-val').textContent = data.ai;
 
-            setTimeout(() => {
-                document.getElementById('photoshop-bar').style.width = data.photoshop;
-                document.getElementById('color-bar').style.width = data.color;
-                document.getElementById('ai-bar').style.width = data.ai;
-            }, 50);
+        if (data.analysis) {
+            dropdown.style.display = 'block';
+            const a = data.analysis;
+
+            const fields = [
+                ['asymmetry', a.asymmetry],
+                ['colour',    a.colour],
+                ['artifact',  a.artifacts],
+                ['blur',      a.blur],
+                ['noise',     a.noise],
+            ];
+
+            fields.forEach(([key, val]) => {
+                document.getElementById(`${key}-val`).textContent = `${val}%`;
+                setTimeout(() => {
+                    document.getElementById(`${key}-bar`).style.width = `${val}%`;
+                }, 50);
+            });
         } else {
             dropdown.style.display = 'none';
             if (dropdownContent) dropdownContent.style.display = 'none';
-            if (document.getElementById('dropdown-toggle')) document.getElementById('dropdown-toggle').textContent = 'View Fake Reasoning Details ▼';
+            if (document.getElementById('dropdown-toggle'))
+                document.getElementById('dropdown-toggle').textContent = 'View Detailed Analysis ▼';
         }
     }
 

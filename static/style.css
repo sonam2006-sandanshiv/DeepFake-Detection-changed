@@ -152,58 +152,19 @@ header p {
     padding: 30px 0;
 }
 
-/* Cat Running Animation */
-.cat-loader {
-    font-size: 48px;
-    display: inline-block;
-    animation: run 1.5s infinite linear;
-    margin-bottom: 16px;
+/* Standard Spinner */
+.spinner {
+    width: 52px;
+    height: 52px;
+    border: 5px solid var(--border-color);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.85s linear infinite;
+    margin: 0 auto 16px auto;
 }
 
-@keyframes run {
-    0% {
-        transform: translateX(-50px) translateY(0) rotate(0deg);
-    }
-
-    10% {
-        transform: translateX(-40px) translateY(-5px) rotate(5deg);
-    }
-
-    20% {
-        transform: translateX(-30px) translateY(0) rotate(0deg);
-    }
-
-    30% {
-        transform: translateX(-20px) translateY(-5px) rotate(-5deg);
-    }
-
-    40% {
-        transform: translateX(-10px) translateY(0) rotate(0deg);
-    }
-
-    50% {
-        transform: translateX(0) translateY(-5px) rotate(5deg);
-    }
-
-    60% {
-        transform: translateX(10px) translateY(0) rotate(0deg);
-    }
-
-    70% {
-        transform: translateX(20px) translateY(-5px) rotate(-5deg);
-    }
-
-    80% {
-        transform: translateX(30px) translateY(0) rotate(0deg);
-    }
-
-    90% {
-        transform: translateX(40px) translateY(-5px) rotate(5deg);
-    }
-
-    100% {
-        transform: translateX(50px) translateY(0) rotate(0deg);
-    }
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 .loading-state p {
