@@ -25,17 +25,15 @@ model = None
 model_name = "Unknown"
 
 def get_model_architecture(name):
-    if name == 'resnet':
+    if name in ['resnet', 'resnet50']:
         m = models.resnet50()
         m.fc = nn.Linear(m.fc.in_features, 2)
-    elif name == 'inception':
-        m = models.inception_v3(transform_input=False)
-        m.aux_logits = False
-        m.AuxLogits = None
-        m.fc = nn.Linear(m.fc.in_features, 2)
-    elif name == 'vit':
-        m = models.vit_b_16()
-        m.heads.head = nn.Linear(m.heads.head.in_features, 2)
+    elif name == 'efficientnet':
+        m = models.efficientnet_b0()
+        m.classifier[1] = nn.Linear(m.classifier[1].in_features, 2)
+    elif name == 'mobilenet':
+        m = models.mobilenet_v3_large()
+        m.classifier[3] = nn.Linear(m.classifier[3].in_features, 2)
     else:
         raise ValueError(f"Unknown architecture {name}")
     return m
