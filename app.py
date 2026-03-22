@@ -128,7 +128,6 @@ def compute_analysis(image):
     colour = min(colour * 1.5, 100.0)
 
     # 3. Digital Artifacts — high-frequency Laplacian energy
-    gray = img.mean(axis=2)
     laplacian = np.array(image.convert('L').resize((256, 256)).filter(ImageFilter.FIND_EDGES), dtype=np.float32)
     artifacts = float(np.mean(laplacian)) / 255.0 * 100
     artifacts = min(artifacts * 2.5, 100.0)
